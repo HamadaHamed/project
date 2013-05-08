@@ -1,0 +1,549 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <title>pixi.js plane</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1 maximum-scale=1 user-scalable=0" />
+	<link rel="stylesheet" href="game.css">
+	<script src="jquery-1.8.5.min.js"></script>
+	<script src="pixi.js"></script>
+</head>
+<body>
+	<div id="Score">Score: 0<br />Level: 1</div>
+	<audio autoplay = "autoplay" loop = "loop">
+	<source src = "sound.ogg" type = "audio/ogg">	
+	<script> 
+	var stage = new PIXI.Stage(0x000000, true);
+	var renderer = PIXI.autoDetectRenderer(300, 500);
+	document.body.appendChild(renderer.view);
+	
+	var Score = 0;
+	var Level = 1;
+	
+	var texture = PIXI.Texture.fromImage("plane.png");
+	var plane = new PIXI.Sprite(texture);
+	
+	plane.position.x = 150;
+	plane.position.y = 400;
+	plane.speed = 3;
+	plane.isUpKey = false;
+	plane.isDownKey = false;
+	plane.isRightKey = false;
+	plane.isLeftKey = false;
+	plane.isSpacebar = false;
+	plane.isShooting = false;
+	
+	var texture = PIXI.Texture.fromImage("button.png");
+	var btnPlay = new PIXI.Sprite(texture);
+	
+	btnPlay.position.x = 50;
+	btnPlay.position.y = 250;
+	btnPlay.xLeft = 50; 
+	btnPlay.xRight = 250;
+	btnPlay.yTop = 250;
+	btnPlay.yBottom = 350;
+
+	var texture = PIXI.Texture.fromImage("button1.png");
+	var btnPlay1 = new PIXI.Sprite(texture);
+
+	btnPlay1.position.x = 50;
+	btnPlay1.position.y = 250;
+	btnPlay1.xLeft = 50; 
+	btnPlay1.xRight = 2500;
+	btnPlay1.yTop = 250;
+	btnPlay1.yBottom = 350;
+
+	var texture = PIXI.Texture.fromImage("button2.png");
+	var btnPlay2 = new PIXI.Sprite(texture);
+
+	btnPlay2.position.x = 50;
+	btnPlay2.position.y = 250;
+	btnPlay2.xLeft = 50; 
+	btnPlay2.xRight = 2500;
+	btnPlay2.yTop = 250;
+	btnPlay2.yBottom = 350;
+
+	var texture = PIXI.Texture.fromImage("button3.png");
+	var btnPlay3 = new PIXI.Sprite(texture);
+
+	btnPlay3.position.x = 50;
+	btnPlay3.position.y = 250;
+	btnPlay3.xLeft = 50; 
+	btnPlay3.xRight = 2500;
+	btnPlay3.yTop = 250;
+	btnPlay3.yBottom = 350;
+
+	var texture = PIXI.Texture.fromImage("button4.png");
+	var btnPlay4 = new PIXI.Sprite(texture);
+
+	btnPlay4.position.x = 50;
+	btnPlay4.position.y = 250;
+	btnPlay4.xLeft = 50; 
+	btnPlay4.xRight = 2500;
+	btnPlay4.yTop = 250;
+	btnPlay4.yBottom = 350;
+
+	var texture = PIXI.Texture.fromImage("button5.png");
+	var btnPlay5 = new PIXI.Sprite(texture);
+
+	btnPlay5.position.x = 50;
+	btnPlay5.position.y = 250;
+	btnPlay5.xLeft = 50; 
+	btnPlay5.xRight = 2500;
+	btnPlay5.yTop = 250;
+	btnPlay5.yBottom = 350;
+
+	var mouseX = 0;
+	var mouseY = 0;
+
+	var texture = PIXI.Texture.fromImage("explosion.png");
+	var explosion = new PIXI.Sprite(texture);
+
+    var isPlaying = false;
+
+    var requestAnimFrame = window.requestAnimationFrame || 
+                           window.webkitRequestAnimationFrame ||
+                           window.mozRequestAnimationFrame ||
+                           window.msRequestAnimationFrame ||
+                           window.oRequestAnimationFrame;
+
+    var bullets = [];
+	var currentBullet = 0;
+	for (var i = 0; i < 5; i++){
+	        var texture = PIXI.Texture.fromImage("pixel.png");
+	        bullets[i] = new PIXI.Sprite(texture);
+	        bullets[i].position.x = plane.position.x;
+	        bullets[i].position.y = plane.position.y;
+	        bullets[i].explosion = new Explosion();
+	}
+
+    var enemies = [];
+
+    init();
+
+function init(){    
+	var menu = PIXI.Sprite.fromImage("bgmenu.png");
+	stage.addChild(menu);
+	requestAnimFrame( animate );
+	stage.addChild(btnPlay);
+	document.addEventListener('click',mouseClicked,false);
+}
+
+function level2(){    
+	var menu = PIXI.Sprite.fromImage("bgmenu.png");
+	stage.addChild(menu);
+	requestAnimFrame( animate );
+	stage.addChild(btnPlay1);
+	document.addEventListener('click',mouseClicked,false);
+}
+
+function level3(){    
+	var menu = PIXI.Sprite.fromImage("bgmenu.png");
+	stage.addChild(menu);
+	requestAnimFrame( animate );
+	stage.addChild(btnPlay2);
+	document.addEventListener('click',mouseClicked,false);
+}
+
+function level4(){    
+	var menu = PIXI.Sprite.fromImage("bgmenu.png");
+	stage.addChild(menu);
+	requestAnimFrame( animate );
+	stage.addChild(btnPlay3);
+	document.addEventListener('click',mouseClicked,false);
+}
+
+function level5(){    
+	var menu = PIXI.Sprite.fromImage("bgmenu.png");
+	stage.addChild(menu);
+	requestAnimFrame( animate );
+	stage.addChild(btnPlay4);
+	document.addEventListener('click',mouseClicked,false);
+}
+
+function playGame() {
+	if (Level == 1){
+	spawnEnemy(3);
+	var background = PIXI.Sprite.fromImage("bg.png");
+	stage.addChild(background);
+    }
+    else if (Level == 2) {
+	spawnEnemy(5);
+	var background2 = PIXI.Sprite.fromImage("bg2.png");
+	stage.addChild(background2);
+    }
+    else if (Level == 3) {
+	spawnEnemy(7);
+	var background3 = PIXI.Sprite.fromImage("bg3.png");
+	stage.addChild(background3);
+    }
+    else if (Level == 4) {
+	spawnEnemy(9);
+	var background4 = PIXI.Sprite.fromImage("bg4.png");
+	stage.addChild(background4);
+    }
+    else{
+	spawnEnemy(11);
+	var background5 = PIXI.Sprite.fromImage("bg5.png");
+	stage.addChild(background5);
+    }
+	startLoop();
+	document.addEventListener('keydown',checkKeyDown,false);
+	document.addEventListener('keyup',checkKeyUp,false);
+}
+
+function GameOver() {
+	var gameover = PIXI.Sprite.fromImage("GameOver.png");
+	stage.addChild(gameover);
+	requestAnimFrame( animate );
+	stage.addChild(btnPlay5);
+	document.addEventListener('click',mouseClicked,false);
+}
+
+function grategame() {
+	var grategame = PIXI.Sprite.fromImage("grategame.png");
+	stage.addChild(grategame);
+	requestAnimFrame( animate );
+	stage.addChild(btnPlay3);
+	document.addEventListener('click',mouseClicked,false);
+}
+
+function spawnEnemy(number){
+	for (var i = 0; i < number; i++) {
+	var texture = PIXI.Texture.fromImage("planes.png");
+	enemies[i] = new PIXI.Sprite(texture);
+	enemies[i].position.x = Math.floor(Math.random() * 200);
+	enemies[i].position.y = Math.floor(Math.random() * 200) - 500;
+    }
+}
+
+function drawAllEnemies(x) {
+	for (var i = 0; i < x; i++) {
+	enemies[i].position.y += 3;
+	stage.addChild(enemies[i]);
+	collision(i);
+	checkEscaped(i);
+	}
+}
+
+function collision(a) {
+	if (enemies[a].position.x >= plane.position.x && enemies[a].position.x <= plane.position.x + 50 && enemies[a].position.y >= plane.position.y && enemies[a].position.y <= plane.position.y + 60) {
+		explosion.position.x = plane.position.x;
+		explosion.position.y = plane.position.y;
+		stage.addChild(explosion);
+        GameOver();
+	}
+}
+
+function checkEscaped (z){
+	if (enemies[z].position.y >= 500 ) {
+	recycleEnemy(z);
+	}
+}
+
+function recycleEnemy(y) {
+   	enemies[y].position.x = Math.floor(Math.random() * 200);
+	enemies[y].position.y = Math.floor(Math.random() * 200) - 500;	
+}
+
+function loop(){
+	if(isPlaying){
+		createJet1();
+		if (Level == 1) {
+		drawAllEnemies(3);
+	    }
+	    else if (Level == 2) {
+	    drawAllEnemies(5);	
+	    }
+	    else if (Level == 3) {
+	    drawAllEnemies(7);	
+	    }
+	    else if (Level == 4) {
+	    drawAllEnemies(9);	
+	    }
+	    else{
+	    drawAllEnemies(11);	
+	    }
+		requestAnimFrame(loop);
+	}
+}
+
+function startLoop(){
+    isPlaying = true;
+    loop();
+}
+
+function createJet1(){
+	checkDirection();
+	checkShooting();
+    drawAllBullets(); 
+	stage.addChild(plane);
+}
+
+function checkDirection() {
+	if (plane.isUpKey){
+		plane.position.y -= plane.speed;
+	}
+	if (plane.isRightKey){
+		plane.position.x += plane.speed;
+	}
+	if (plane.isDownKey){
+		plane.position.y += plane.speed;
+	}
+	if (plane.isLeftKey){
+		plane.position.x -= plane.speed;
+	}
+}
+
+function checkShooting() {
+	if (plane.isSpacebar && !plane.isShooting) {
+		plane.isShooting = true;
+        currentBullet++;
+        if (currentBullet >= bullets.length) currentBullet = 0;
+	} else if (!plane.isSpacebar){
+		plane.isShooting = false;
+	}
+}
+
+function drawAllBullets() {
+	for (var i = 0; i < currentBullet; i++) {
+		if (Level == 1){
+		checkHitEnemy(i);
+	    }
+	    else if (Level == 2) {
+	    checkHitEnemy2(i);	
+	    }
+	    else if (Level == 3) {
+	    checkHitEnemy3(i);	
+	    }
+	    else if (Level == 4) {
+	    checkHitEnemy4(i);	
+	    }
+	    else{
+	    checkHitEnemy5(i);	
+	    } 
+	if (bullets[i].position.y >= 0){	
+	bullets[i].position.y -= 3;
+	stage.addChild(bullets[i]);
+    }
+    else if (bullets[i].position.y < 0){
+	recycle(i);
+    }
+    if (explosion.hasHit){
+    	drawExplosion(i);
+    } 
+	}
+}
+
+function recycle(y) {
+   	bullets[y].position.x = plane.position.x;
+	bullets[y].position.y = plane.position.y;	
+}
+
+function checkHitEnemy(m) {
+	for (var i = 0; i < 3; i++) {
+		if (bullets[m].position.x >= enemies[i].position.x && bullets[m].position.x <= enemies[i].position.x + 30 && bullets[m].position.y >= enemies[i].position.y && bullets[m].position.y <= enemies[i].position.y + 40) {
+			if (Score < 10) {
+			Score = Score + 1;
+			document.getElementById('Score').innerHTML = 'Score: ' + Score + '<br />Level: ' + Level;
+			}
+			else if (Score == 10) {
+			Level = Level + 1;
+			level2();
+			document.getElementById('Score').innerHTML = 'Score: ' + Score + '<br />Level: ' + Level;
+			}
+			recycleEnemy(i);
+			recycle(m);
+			explosion.position.x = enemies[i].position.x;
+			explosion.position.y = enemies[i].position.y;
+			explosion.hasHit = true;
+			recycle(m);
+			recycleEnemy(i);
+		}
+	}
+
+}
+
+function checkHitEnemy2(m) {
+	for (var i = 0; i < 5; i++) {
+		if (bullets[m].position.x >= enemies[i].position.x && bullets[m].position.x <= enemies[i].position.x + 30 && bullets[m].position.y >= enemies[i].position.y && bullets[m].position.y <= enemies[i].position.y + 40) {
+            if (Score < 100) {
+			Score = Score + 2;
+			document.getElementById('Score').innerHTML = 'Score: ' + Score + '<br />Level: ' + Level;
+			}
+			else if (Score == 100) {
+			Level = Level + 1;
+			level3();
+			document.getElementById('Score').innerHTML = 'Score: ' + Score + '<br />Level: ' + Level;
+			}
+			recycleEnemy(i);
+			recycle(m);
+			explosion.position.x = enemies[i].position.x;
+			explosion.position.y = enemies[i].position.y;
+			explosion.hasHit = true;
+			recycle(m);
+			recycleEnemy(i);
+		}
+	}
+
+}
+
+function checkHitEnemy3(m) {
+	for (var i = 0; i < 7; i++) {
+		if (bullets[m].position.x >= enemies[i].position.x && bullets[m].position.x <= enemies[i].position.x + 30 && bullets[m].position.y >= enemies[i].position.y && bullets[m].position.y <= enemies[i].position.y + 40) {
+			if (Score < 500) {
+			Score = Score + 10;
+			document.getElementById('Score').innerHTML = 'Score: ' + Score + '<br />Level: ' + Level;
+			}
+			else if (Score == 500) {
+			Level = Level + 1;
+			level4();
+			document.getElementById('Score').innerHTML = 'Score: ' + Score + '<br />Level: ' + Level;
+			}
+			recycleEnemy(i);
+			recycle(m);
+			explosion.position.x = enemies[i].position.x;
+			explosion.position.y = enemies[i].position.y;
+			explosion.hasHit = true;
+			recycle(m);
+			recycleEnemy(i);
+		}
+	}
+
+}
+
+function checkHitEnemy4(m) {
+	for (var i = 0; i < 9; i++) {
+		if (bullets[m].position.x >= enemies[i].position.x && bullets[m].position.x <= enemies[i].position.x + 30 && bullets[m].position.y >= enemies[i].position.y && bullets[m].position.y <= enemies[i].position.y + 40) {
+		    if (Score < 1500) {
+			Score = Score + 20;
+			document.getElementById('Score').innerHTML = 'Score: ' + Score + '<br />Level: ' + Level;
+			}
+			else if (Score == 1500) {
+			Level = Level + 1;
+			level5();
+			document.getElementById('Score').innerHTML = 'Score: ' + Score + '<br />Level: ' + Level;
+			}
+			recycleEnemy(i);
+			recycle(m);
+			explosion.position.x = enemies[i].position.x;
+			explosion.position.y = enemies[i].position.y;
+			explosion.hasHit = true;
+			recycle(m);
+			recycleEnemy(i);
+		}
+	}
+
+}
+
+function checkHitEnemy5(m) {
+	for (var i = 0; i < 11; i++) {
+		if (bullets[m].position.x >= enemies[i].position.x && bullets[m].position.x <= enemies[i].position.x + 30 && bullets[m].position.y >= enemies[i].position.y && bullets[m].position.y <= enemies[i].position.y + 40) {
+		    if (Score < 5000) {
+			Score = Score + 50;
+			document.getElementById('Score').innerHTML = 'Score: ' + Score + '<br />Level: ' + Level;
+			}
+			else if (Score == 5000) {
+			grategame();
+			document.getElementById('Score').innerHTML = 'Score: ' + Score + '<br />Level: ' + Level;
+			}
+			recycleEnemy(i);
+			recycle(m);
+			explosion.position.x = enemies[i].position.x;
+			explosion.position.y = enemies[i].position.y;
+			explosion.hasHit = true;
+			recycle(m);
+			recycleEnemy(i);
+		}
+	}
+
+}
+
+function Explosion(){
+	explosion.position.x = 0;
+	explosion.position.y = 0;
+	explosion.hasHit = false;
+	explosion.currentFrame = 0;
+	explosion.totalFrames = 10;
+}
+
+function drawExplosion(n){
+	explosion.position.x = bullets[n].position.x;
+	explosion.position.y = bullets[n].position.y;
+	if (explosion.currentFrame <= explosion.totalFrames) {
+		stage.addChild(explosion);
+		explosion.currentFrame++;
+	}
+
+	else {
+		explosion.hasHit = false;
+		explosion.currentFrame = 0;
+	}
+}
+
+function animate() {
+	    requestAnimFrame( animate );   
+	    renderer.render(stage);
+	}
+
+function checkClicjed() {
+	if (btnPlay.xLeft <= mouseX && mouseX <= btnPlay.xRight && btnPlay.yTop <= mouseY && mouseY <= btnPlay.yBottom) return true;
+}
+
+function mouseClicked(e){
+	mouseX = e.pageX;
+	mouseY = e.pageY;
+	if (checkClicjed()) playGame();
+}
+
+function checkKeyDown(e){
+	var keyID = e.keyCode || e.which;
+	if (keyID === 38 || keyID ===87){ //up arraw or W key
+	    plane.isUpKey = true;
+		e.preventDefault();
+	}
+	if (keyID === 39 || keyID ===68){ //right arraw or D key
+		plane.isRightKey = true;
+		e.preventDefault();
+	}
+	if (keyID === 40 || keyID ===83){ //down arraw or S key
+		plane.isDownKey = true;
+		e.preventDefault();
+	}
+	if (keyID === 37 || keyID ===65){ //left arraw or A key
+		plane.isLeftKey = true;
+		e.preventDefault();
+	}
+	if (keyID === 13){ //Enter key
+		plane.isSpacebar = true;
+		e.preventDefault();
+	}
+}
+
+function checkKeyUp(e){
+	var keyID = e.keyCode || e.which;
+	if (keyID === 38 || keyID ===87){ //up arraw or W key
+		plane.isUpKey = false;
+		e.preventDefault();
+	}
+	if (keyID === 39 || keyID ===68){ //right arraw or D key
+		plane.isRightKey = false;
+		e.preventDefault();
+	}
+	if (keyID === 40 || keyID ===83){ //down arraw or S key
+		plane.isDownKey = false;
+		e.preventDefault();
+	}
+	if (keyID === 37 || keyID ===65){ //left arraw or A key
+		plane.isLeftKey = false;
+		e.preventDefault();
+	}
+	if (keyID === 13){ //Enter key
+		plane.isSpacebar = false;
+		e.preventDefault();
+	}
+}
+	</script>
+
+	</body>
+</html>
